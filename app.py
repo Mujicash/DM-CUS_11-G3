@@ -5,6 +5,7 @@ from routes.condominio import condominio
 from routes.cuenta import cuenta
 from routes.departamento import departamento
 from routes.propietario import propietario
+from routes.recibo import recibo
 from utils.db import db
 
 app = Flask(__name__)
@@ -16,6 +17,7 @@ app.register_blueprint(propietario)
 app.register_blueprint(condominio)
 app.register_blueprint(departamento)
 app.register_blueprint(cuenta)
+app.register_blueprint(recibo)
 
 
 db.init_app(app)
