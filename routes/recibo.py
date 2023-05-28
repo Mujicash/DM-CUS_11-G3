@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
+import datetime
+
+from flask import Blueprint, jsonify, request
+
 from models.recibo import Recibo
 from utils.db import db
-import datetime
 
 recibo = Blueprint('recibo', __name__, url_prefix='/api/receipt')
 

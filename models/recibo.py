@@ -1,6 +1,8 @@
-from utils.db import db
 from dataclasses import dataclass
 from datetime import datetime
+
+from utils.db import db
+
 
 @dataclass
 class Recibo(db.Model):
