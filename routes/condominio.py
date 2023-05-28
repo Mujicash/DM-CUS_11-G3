@@ -2,15 +2,15 @@ from flask import Blueprint, request, jsonify
 from models.condominio import Condominio
 from utils.db import db
 
-condominio = Blueprint('condominio', __name__, url_prefix='/api/owner')
+condominio = Blueprint('condominio', __name__, url_prefix='/api/condo')
 
 @condominio.route("/", methods=['GET'])
 def getCondos():
     data = {}
     condos = Condominio.query.all()
-    data['Owners'] = [condo.to_json() for condo in condos]
+    data['Condos'] = [condo.to_json() for condo in condos]
 
-    print(condos)  
+    print(data)  
 
     return jsonify(data)
 
@@ -20,8 +20,11 @@ def addCondo():
 
     nombre = body['nombre']
     direccion = body['direccion']
+    distrito = body['distrito']
+    telefono = body['telefono']
+    print(nombre, direccion)
 
-    new_condo = Condominio(nombre, direccion)
+    new_condo = Condominio(nombre, direccion, distrito, telefono)
     db.session.add(new_condo)
     db.session.commit()
 
