@@ -4,22 +4,25 @@ from dataclasses import dataclass
 @dataclass
 class Cuenta(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    numero = db.Column(db.String(100))
+    tipo_cuenta = db.Column(db.String(100))
+    numero_cuenta = db.Column(db.String(100))
     moneda = db.Column(db.String(100))
-    entidad_bancaria = db.Column(db.String(100))
-    id_propietario = db.Column(db.Integer, db.ForeignKey('propietario.id'))
+    id_persona = db.Column(db.Integer, db.ForeignKey('persona.id'))
+    id_banco = db.Column(db.Integer, db.ForeignKey('banco.id'))
 
-    def __init__(self, numero, moneda, entidad_bancaria, id_propietario):
-        self.numero = numero
+    def __init__(self, tipo_cuenta, numero_cuenta, moneda, id_persona, id_banco):
+        self.tipo_cuenta = tipo_cuenta
+        self.numero_cuenta = numero_cuenta
         self.moneda = moneda
-        self.entidad_bancaria = entidad_bancaria
-        self.id_propietario = id_propietario
+        self.id_persona = id_persona
+        self.id_banco = id_banco
 
     def to_json(self):
         return {
             "id": self.id,
-            "numero": self.numero,
+            "tipo_cuenta": self.tipo_cuenta,
+            "numero_cuenta": self.numero_cuenta,
             "moneda": self.moneda,
-            "entidad_bancaria": self.entidad_bancaria,
-            "id_propietario": self.id_propietario
+            "id_persona": self.id_persona,
+            "id_banco": self.id_banco
         }

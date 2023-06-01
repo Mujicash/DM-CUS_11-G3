@@ -5,30 +5,34 @@ from flask import Blueprint, jsonify, request
 from models.recibo import Recibo
 from utils.db import db
 
-recibo = Blueprint('recibo', __name__, url_prefix='/api/receipt')
+recibo = Blueprint('recibo', __name__, url_prefix='/api/recibo')
 
 @recibo.route("/", methods=['GET'])
-def getReceipts():
+def getRecibos():
     data = {}
-    receipts = Recibo.query.all()
-    data['Receipts'] = [receipt.to_json() for receipt in receipts]
+    recibos = Recibo.query.all()
+    data['Recibos'] = [recibo.to_json() for recibo in recibos]
 
-    print(receipts)  
+    print(recibos)  
 
     return jsonify(data)
 
 @recibo.route("/add", methods=['POST'])
-def addReceipts():
+def addRecibo():
     body = request.get_json()
 
+    numero_recibo = body['numero_recibo']
+    periodo = body['periodo']
     fecha_vencimiento = datetime.datetime.strptime(body['fecha_vencimiento'], "%d/%m/%Y")
     fecha_emision = datetime.datetime.strptime(body['fecha_emision'], "%d/%m/%Y")
-    fecha_pago = datetime.datetime.strptime(body['fecha_pago'], "%d/%m/%Y") if body['fecha_pago'] is not None else body['fecha_pago']
-    monto_total = body['monto_total']
-    id_departamento = body['id_departamento']
+    importe = body['importe']
+    ajuste = body['ajuste']
+    observacion = body['observacion']
+    id_casa = body['id_casa']
+    id_recibo_estado = body['id_recibo_estado']
 
-    new_receipt = Recibo(fecha_emision, fecha_vencimiento, fecha_pago, monto_total, id_departamento)
-    db.session.add(new_receipt)
+    nuevo_recibo = Recibo(numero_recibo, periodo,fecha_emision, fecha_vencimiento, importe, ajuste, observacion, id_casa, id_recibo_estado)
+    db.session.add(nuevo_recibo)
     db.session.commit()
 
     return "saving a new receipt"

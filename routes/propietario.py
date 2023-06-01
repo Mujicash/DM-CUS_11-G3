@@ -1,31 +1,33 @@
 from flask import Blueprint, jsonify, request
 
-from models.propietario import Propietario
+from models.persona import Persona
 from utils.db import db
 
-propietario = Blueprint('propietario', __name__, url_prefix='/api/owner')
+persona = Blueprint('persona', __name__, url_prefix='/api/persona')
 
-@propietario.route("/", methods=['GET'])
-def getOwners():
+@persona.route("/", methods=['GET'])
+def getPersonas():
     data = {}
-    owners = Propietario.query.all()
-    data['Owners'] = [owner.to_json() for owner in owners]
+    personas = Persona.query.all()
+    data['Personas'] = [persona.to_json() for persona in personas]
 
-    print(owners)  
+    print(personas)  
 
     return jsonify(data)
 
-@propietario.route("/add", methods=['POST'])
-def addOwner():
+@persona.route("/add", methods=['POST'])
+def addPersona():
     body = request.get_json()
 
     nombres = body['nombres']
-    apellidos = body['apellidos']
-    telefono = body['telefono']
-    correo = body['correo']
+    apellido_paterno = body['apellido_paterno']
+    apellido_materno = body['apellido_materno']
+    fecha_nacimiento = body['fecha_nacimiento']
+    id_tipo_documento = body['id_tipo_documento']
+    numero_documento = body['numero_documento']
 
-    new_owner = Propietario(nombres, apellidos, telefono, correo)
-    db.session.add(new_owner)
+    nueva_persona = Persona(nombres, apellido_paterno, apellido_materno, fecha_nacimiento, id_tipo_documento, numero_documento)
+    db.session.add(nueva_persona)
     db.session.commit()
 
-    return "saving a new owner"
+    return "saving a new person"

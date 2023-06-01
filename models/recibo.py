@@ -7,25 +7,37 @@ from utils.db import db
 @dataclass
 class Recibo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
+    numero_recibo = db.Column(db.String(50))
+    periodo = db.Column(db.String(50))
     fecha_emision = db.Column(db.DateTime)
     fecha_vencimiento = db.Column(db.DateTime)
-    fecha_pago = db.Column(db.DateTime, nullable=True)
-    monto_total = db.Column(db.Float(10,2))
-    id_departamento = db.Column(db.Integer, db.ForeignKey('departamento.id'))
+    importe = db.Column(db.Float(10,2))
+    ajuste = db.Column(db.Float(10,2))
+    observacion = db.Column(db.String(100))
+    id_casa = db.Column(db.Integer, db.ForeignKey('casa.id'))
+    id_recibo_estado = db.Column(db.Integer, db.ForeignKey('recibo_estado.id'))
 
-    def __init__(self, fecha_emision, fecha_vencimiento, fecha_pago, monto_total, id_departamento):
+    def __init__(self, numero_recibo, periodo, fecha_emision, fecha_vencimiento, importe, ajuste, observacion, id_casa, id_recibo_estado):
+        self.numero_recibo = numero_recibo
+        self.periodo = periodo
         self.fecha_emision = fecha_emision
         self.fecha_vencimiento = fecha_vencimiento
-        self.fecha_pago = fecha_pago
-        self.monto_total = monto_total
-        self.id_departamento = id_departamento
+        self.importe = importe
+        self.ajuste = ajuste
+        self.observacion = observacion
+        self.id_casa = id_casa
+        self.id_recibo_estado = id_recibo_estado
 
     def to_json(self):
         return {
             "id": self.id,
+            "numero_recibo": self.numero_recibo,
+            "periodo": self.periodo,
             "fecha_emision": datetime.strftime(self.fecha_emision, '%d/%m/%Y'),
             "fecha_vencimiento": datetime.strftime(self.fecha_vencimiento, '%d/%m/%Y'),
-            "fecha_pago": datetime.strftime(self.fecha_pago, '%d/%m/%Y'),
-            "monto_total": self.monto_total,
-            "id_departamento": self.id_departamento
+            "importe": self.importe,
+            "ajuste": self.ajuste,
+            "observacion": self.observacion,
+            "id_casa": self.id_casa,
+            "id_recibo_estado": self.id_recibo_estado
         }
