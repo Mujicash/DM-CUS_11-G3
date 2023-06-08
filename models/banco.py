@@ -6,14 +6,16 @@ from utils.db import db
 @dataclass
 class Banco(db.Model):
 
-    id = db.Column(db.Integer, primary_key = True)
-    nombre = db.Column(db.String(50))
+    __tablename__ = 'banco'
+
+    id_banco = db.Column(db.Integer, primary_key = True)
+    descripcion = db.Column(db.String(50))
 
     def __init__(self, nombre):
-        self.nombre = nombre
+        self.descripcion = nombre
 
     def to_json(self):
         return {
-            "id": self.id,
-            "nombre": self.nombre
+            "id": self.id_banco,
+            "nombre": self.descripcion
         }

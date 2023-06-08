@@ -4,9 +4,9 @@ from utils.db import db
 
 
 @dataclass
-class Casa_Estado(db.Model):
+class Estado(db.Model):
 
-    __tablename__ = 'casa_estado'
+    __tablename__ = 'estado'
 
     id_estado = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(15))
@@ -17,5 +17,5 @@ class Casa_Estado(db.Model):
     def to_json(self):
         return {
             "id": self.id_estado,
-            "descripcion": self.descripcion
+            "nombre": self.descripcion
         }

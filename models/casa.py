@@ -5,29 +5,36 @@ from utils.db import db
 
 @dataclass
 class Casa(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    piso = db.Column(db.Integer)
-    bloque = db.Column(db.String(10))
-    numero = db.Column(db.Integer)
-    area = db.Column(db.Float(10,2))
-    id_predio = db.Column(db.Integer, db.ForeignKey('predio.id'))
-    id_propietario = db.Column(db.Integer, db.ForeignKey('persona.id'))
-    id_estado_casa = db.Column(db.Integer, db.ForeignKey('casa_estado.id'))
 
-    def __init__(self, piso, bloque, numero, area, id_predio, id_propietario, id_estado_casa):
-        self.piso = piso
-        self.bloque = bloque
-        self.numero = numero
-        self.area = area
+    __tablename__ = 'casa'
+
+    id_casa = db.Column(db.Integer, primary_key = True)
+    id_predio = db.Column(db.Integer, db.ForeignKey('predio.id_predio'))
+    id_estado = db.Column(db.Integer, db.ForeignKey('casa_estado.id_estado'))
+    id_predio_mdu = db.Column(db.Integer)
+    numero = db.Column(db.Integer)
+    piso = db.Column(db.Integer)
+    area = db.Column(db.Float(10,2))
+    participacion = db.Column(db.Float(6,2))
+
+    def __init__(self, id_casa, id_predio, id_estado, id_predio_mdu, numero, piso, area, participacion):
+        self.id_casa = id_casa
         self.id_predio = id_predio
-        self.id_propietario = id_propietario
-        self.id_estado_casa = id_estado_casa
+        self.id_estado = id_estado
+        self.id_predio_mdu = id_predio_mdu
+        self.numero = numero
+        self.piso = piso
+        self.area = area
+        self.participacion = participacion
 
     def to_json(self):
         return {
-            "id": self.id,
-            "piso": self.piso,
-            "bloque": self.bloque,
+            "id_casa": self.id_casa,
+            "id_predio": self.id_predio,
+            "id_estado": self.id_estado,
+            "id_predio_mdu": self.id_predio_mdu,
             "numero": self.numero,
-            "area": self.area
+            "piso": self.piso,
+            "area": self.area,
+            "participacion": self.participacion
         }

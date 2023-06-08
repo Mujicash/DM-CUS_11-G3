@@ -4,11 +4,11 @@ from utils.db import db
 
 
 @dataclass
-class Recibo_Estado(db.Model):
+class Recaudacion_Estado(db.Model):
 
-    __tablename__ = 'recibo_estado'
+    __tablename__ = 'recaudacion_estado'
 
-    id_recibo_estado = db.Column(db.Integer, primary_key = True)
+    id_recaudacion_estado = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(15))
 
     def __init__(self, nombre):
@@ -16,6 +16,6 @@ class Recibo_Estado(db.Model):
 
     def to_json(self):
         return {
-            "id": self.id_recibo_estado,
+            "id": self.id_recaudacion_estado,
             "nombre": self.descripcion
         }

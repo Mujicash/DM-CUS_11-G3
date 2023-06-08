@@ -3,26 +3,35 @@ from dataclasses import dataclass
 
 @dataclass
 class Predio(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    nombre = db.Column(db.String(100))
-    direccion = db.Column(db.String(100))
-    distrito = db.Column(db.String(50))
-    telefono = db.Column(db.String(10))
-    id_tipo_predio = db.Column(db.Integer, db.ForeignKey('tipo_predio.id'))
 
-    def __init__(self, nombre, direccion, distrito, telefono, id_tipo_predio):
-        self.nombre = nombre
+    __tablename__ = 'tipo_autorizacion'
+
+    id_predio = db.Column(db.Integer, primary_key = True)
+    id_tipo_predio = db.Column(db.Integer, db.ForeignKey('tipo_predio.id_tipo_predio'))
+    descripcion = db.Column(db.String(100))
+    ruc = db.Column(db.String(20))
+    telefono = db.Column(db.String(10))
+    correo = db.Column(db.String(80))
+    direccion = db.Column(db.String(100))
+    idubigeo = db.Column(db.String(6))
+
+    def __init__(self, descripcion, ruc, telefono, correo, direccion, idubigeo, id_tipo_predio):
+        self.descripcion = descripcion
+        self.ruc = ruc
+        self.correo = correo
         self.direccion = direccion
-        self.distrito = distrito
+        self.idubigeo = idubigeo
         self.telefono = telefono
         self.id_tipo_predio = id_tipo_predio
 
     def to_json(self):
         return {
-            "id": self.id,
-            "nombre": self.nombre,
+            "id": self.id_predio,
+            "nombre": self.descripcion,
+            "ruc": self.ruc,
+            "correo": self.correo,
             "direccion": self.direccion,
-            "distrito": self.distrito,
+            "distrito": self.idubigeo,
             "telefono": self.telefono,
             "id_tipo_predio": self.id_tipo_predio
         }
