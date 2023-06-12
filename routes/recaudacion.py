@@ -1,9 +1,11 @@
-import datetime
+import decimal, datetime
 
 from flask import Blueprint, jsonify, request
 
 from models.recaudacion import Recaudacion
 from utils.db import db
+from sqlalchemy import text
+import json
 
 recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
 
@@ -50,3 +52,32 @@ def agregarRecaudacion():
     db.session.commit()
 
     return "saving a new collection"
+
+def alchemyencoder(obj):
+    """JSON encoder function for SQLAlchemy special classes."""
+    if isinstance(obj, datetime.date):
+        return obj.isoformat()
+    elif isinstance(obj, decimal.Decimal):
+        return float(obj)
+
+@recaudaciones.route("/recaudacion-predio/<int:id>", methods=["GET"])
+def recaudacionesXPredio(id):
+    sql = text(
+        "select r.id_recaudacion, TO_CHAR(r.fecha_operacion, 'dd/mm/YYYY') fecha_operacion, tm.etiqueta, r.importe, " +
+        "r.id_recaudacion_estado, mt.id_mant_recibo, c.id_casa, c.numero, c.piso, pm.id_predio_mdu, pm.descripcion " + 
+        "from recaudacion r " +
+        "inner join tipo_moneda tm on r.moneda = tm.id_tipo_moneda " + 
+        "inner join mant_recibo mt on r.id_mant_recibo = mt.id_mant_recibo " + 
+        "inner join casa c on mt.id_casa = c.id_casa " +
+        "inner join predio_mdu pm on c.id_predio_mdu = pm.id_predio_mdu " +
+        "where c.id_predio = :id"
+    )
+
+    with db.engine.connect() as conn:
+        result = conn.execute(sql, {'id': id})
+        columns = [key for key in result.keys()]
+
+    recaudaciones = [{columns[index]: r for index, r in enumerate(row)} for row in result]
+    
+    return jsonify(recaudaciones)
+
