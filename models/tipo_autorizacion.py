@@ -11,7 +11,7 @@ class Tipo_Autorizacion(db.Model):
     id_tipo_autorizacion = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(50))
 
-    def __init__(self, descripcion, etiqueta):
+    def __init__(self, descripcion):
         self.descripcion = descripcion
 
     def to_json(self):

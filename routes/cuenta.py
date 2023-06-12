@@ -17,14 +17,13 @@ def getCuentas():
 @cuenta.route("/add", methods=['POST'])
 def addCuentas():
     body = request.get_json()
-
-    tipo_cuenta = body['tipo_cuenta']
-    numero_cuenta = body['numero_cuenta']
-    moneda = body['moneda']
+    
+    numero_cuenta = body['ncuenta']
+    moneda = body['id_tipo_moneda']
     id_persona = body['id_persona']
     id_banco = body['id_banco']
 
-    nueva_cuenta = Cuenta(tipo_cuenta, numero_cuenta, moneda, id_persona, id_banco)
+    nueva_cuenta = Cuenta(id_persona, id_banco, moneda, numero_cuenta)
     db.session.add(nueva_cuenta)
     db.session.commit()
 

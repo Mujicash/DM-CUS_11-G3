@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class Predio(db.Model):
 
-    __tablename__ = 'tipo_autorizacion'
+    __tablename__ = 'predio'
 
     id_predio = db.Column(db.Integer, primary_key = True)
     id_tipo_predio = db.Column(db.Integer, db.ForeignKey('tipo_predio.id_tipo_predio'))

@@ -5,30 +5,47 @@ from flask import Blueprint, jsonify, request
 from models.recaudacion import Recaudacion
 from utils.db import db
 
-recaudacion = Blueprint('recaudacion', __name__, url_prefix='/api/recaudacion')
+recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
 
-@recaudacion.route("/", methods=['GET'])
-def getRecaudaciones():
+
+@recaudaciones.route("/", methods=["GET"])
+def listarRecaudaciones():
     data = {}
     recaudaciones = Recaudacion.query.all()
-    data['Recaudaciones'] = [recaudacion.to_json() for recaudacion in recaudaciones]
+    data["Recaudaciones"] = [recaudacion.to_json() for recaudacion in recaudaciones]
 
-    print(recaudaciones)  
+    print(recaudaciones)
 
     return jsonify(data)
 
-@recaudacion.route("/add", methods=['POST'])
-def addRecaudacion():
+
+@recaudaciones.route("/", methods=["POST"])
+def agregarRecaudacion():
     body = request.get_json()
 
-    importe = body['importe']
-    fecha_operacion = datetime.datetime.strptime(body['fecha_operacion'], "%d/%m/%Y")
-    numero_operacion = body['numero_operacion']
+    id_recaudacion = body["id_recaudacion"]
+    id_cuenta = body["id_cuenta"]
+    id_mant_recibo = body["id_mant_recibo"]
+    n_operacion = body["n_operacion"]
+    fecha_operacion = datetime.datetime.strptime(body["fecha_operacion"], "%Y-%m-%d")
+    moneda = body["moneda"]
+    importe = body["importe"]
+    id_recaudacion_estado = body["id_recaudacion_estado"]
+    id_cuenta_cargo = body["id_cuenta_cargo"]
     observacion = body["observacion"]
-    id_cuenta_cargo = body['id_cuenta_cargo']
-    id_recibo = body['id_recibo']
 
-    nueva_recaudacion = Recaudacion(numero_operacion, fecha_operacion, importe, observacion, id_cuenta_cargo, id_recibo)
+    nueva_recaudacion = Recaudacion(
+        id_recaudacion,
+        id_cuenta,
+        id_mant_recibo,
+        n_operacion,
+        fecha_operacion,
+        moneda,
+        importe,
+        id_recaudacion_estado,
+        id_cuenta_cargo,
+        observacion,
+    )
     db.session.add(nueva_recaudacion)
     db.session.commit()
 

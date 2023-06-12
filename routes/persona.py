@@ -19,14 +19,16 @@ def getPersonas():
 def addPersona():
     body = request.get_json()
 
-    nombres = body['nombres']
     apellido_paterno = body['apellido_paterno']
     apellido_materno = body['apellido_materno']
+    nombres = body['nombres']
     fecha_nacimiento = body['fecha_nacimiento']
     id_tipo_documento = body['id_tipo_documento']
     numero_documento = body['numero_documento']
+    direccion = body['direccion']
+    idubigeo = body['idubigeo']
 
-    nueva_persona = Persona(nombres, apellido_paterno, apellido_materno, fecha_nacimiento, id_tipo_documento, numero_documento)
+    nueva_persona = Persona(apellido_paterno, apellido_materno, nombres, fecha_nacimiento, id_tipo_documento, numero_documento, direccion, idubigeo)
     db.session.add(nueva_persona)
     db.session.commit()
 

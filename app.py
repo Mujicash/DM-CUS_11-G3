@@ -3,9 +3,14 @@ from flask import Flask
 from config import URI
 from routes.predio import predio
 from routes.cuenta import cuenta
+from routes.tipo_moneda import tipo_moneda
+from routes.cuenta_predio import cuenta_predio
 from routes.casa import casa
-from routes.propietario import persona
-from routes.recaudacion import recaudacion
+from routes.persona import persona
+from routes.recaudacion_estado import recaudacion_estado
+from routes.recaudacion import recaudaciones
+from routes.estado import estado
+from routes.tipo_autorizacion import tipo_autorizacion
 from routes.recibo import recibo
 from routes.tipo_predio import tipo_predio
 from routes.banco import banco
@@ -23,8 +28,13 @@ app.register_blueprint(persona)
 app.register_blueprint(predio)
 app.register_blueprint(casa)
 app.register_blueprint(cuenta)
+app.register_blueprint(tipo_moneda)
+app.register_blueprint(cuenta_predio)
 app.register_blueprint(recibo)
-app.register_blueprint(recaudacion)
+app.register_blueprint(recaudacion_estado)
+app.register_blueprint(recaudaciones)
+app.register_blueprint(estado)
+app.register_blueprint(tipo_autorizacion)
 app.register_blueprint(tipo_predio)
 app.register_blueprint(banco)
 app.register_blueprint(casa_estado)

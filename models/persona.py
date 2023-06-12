@@ -8,7 +8,7 @@ class Persona(db.Model):
 
     __tablename__ = 'persona'
 
-    id_persona = db.Column(db.Integer, primary_key = True)
+    id_persona = db.Column(db.Integer, db.Sequence('id_persona_seq'), primary_key = True)
     nombres = db.Column(db.String(50), nullable=False)
     apellido_paterno = db.Column(db.String(50), nullable=False)
     apellido_materno = db.Column(db.String(50), nullable=False)
