@@ -1,11 +1,11 @@
-import decimal, datetime
+import datetime
+import decimal
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy import text
 
 from models.recaudacion import Recaudacion
 from utils.db import db
-from sqlalchemy import text
-import json
 
 recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
 
@@ -53,12 +53,6 @@ def agregarRecaudacion():
 
     return "saving a new collection"
 
-def alchemyencoder(obj):
-    """JSON encoder function for SQLAlchemy special classes."""
-    if isinstance(obj, datetime.date):
-        return obj.isoformat()
-    elif isinstance(obj, decimal.Decimal):
-        return float(obj)
 
 @recaudaciones.route("/recaudacion-predio/<int:id>", methods=["GET"])
 def recaudacionesXPredio(id):

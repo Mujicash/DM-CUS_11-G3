@@ -11,7 +11,7 @@ from routes.recaudacion_estado import recaudacion_estado
 from routes.recaudacion import recaudaciones
 from routes.estado import estado
 from routes.tipo_autorizacion import tipo_autorizacion
-from routes.recibo import recibo
+from routes.recibo import recibos
 from routes.tipo_predio import tipo_predio
 from routes.banco import banco
 from routes.casa_estado import casa_estado
@@ -30,7 +30,7 @@ app.register_blueprint(casa)
 app.register_blueprint(cuenta)
 app.register_blueprint(tipo_moneda)
 app.register_blueprint(cuenta_predio)
-app.register_blueprint(recibo)
+app.register_blueprint(recibos)
 app.register_blueprint(recaudacion_estado)
 app.register_blueprint(recaudaciones)
 app.register_blueprint(estado)

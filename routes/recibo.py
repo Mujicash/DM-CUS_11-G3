@@ -1,13 +1,14 @@
 import datetime
 
 from flask import Blueprint, jsonify, request
+from sqlalchemy import text
 
 from models.recibo import Recibo
 from utils.db import db
 
-recibo = Blueprint('recibo', __name__, url_prefix='/api/recibo')
+recibos = Blueprint('recibo', __name__, url_prefix='/api/recibos')
 
-@recibo.route("/", methods=['GET'])
+@recibos.route("/", methods=['GET'])
 def getRecibos():
     data = {}
     recibos = Recibo.query.all()
@@ -17,7 +18,7 @@ def getRecibos():
 
     return jsonify(data)
 
-@recibo.route("/add", methods=['POST'])
+@recibos.route("/add", methods=['POST'])
 def addRecibo():
     body = request.get_json()
 
@@ -36,3 +37,23 @@ def addRecibo():
     db.session.commit()
 
     return "saving a new receipt"
+
+@recibos.route("/recibo-tipo-gasto/<int:id>", methods=['GET'])
+def mantenimientoReciboTipoGasto(id):
+
+    sql = text(
+        "select tg.id_tipo_gasto, tg.descripcion, SUM(mrd.importe_casa) total_tipo_gasto " +
+        "from mant_recibo_det mrd " + 
+        "inner join gasto g on mrd.id_gasto = g.id_gasto " +
+        "inner join tipo_gasto tg on g.id_tipo_gasto = tg.id_tipo_gasto " + 
+        "where id_mant_recibo = :id " + 
+        "group by tg.id_tipo_gasto"
+    )
+
+    with db.engine.connect() as conn:
+        result = conn.execute(sql, {'id': id})
+        columns = [key for key in result.keys()]
+
+    recaudaciones_tipo_gasto = [{columns[index]: r for index, r in enumerate(row)} for row in result]
+    
+    return jsonify(recaudaciones_tipo_gasto)
