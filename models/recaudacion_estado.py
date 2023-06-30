@@ -11,6 +11,8 @@ class Recaudacion_Estado(db.Model):
     id_recaudacion_estado = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(15))
 
+    recaudacion = db.relationship('Recaudacion', backref='estado_recaudacion')
+
     def __init__(self, nombre):
         self.descripcion = nombre
 

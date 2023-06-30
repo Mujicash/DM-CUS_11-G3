@@ -1,16 +1,33 @@
 from flask import Blueprint, request, jsonify
 from models.cuenta_predio import Cuenta_Predio
+from schemas.cuenta_predio import cuenta_schema, cuentas_schema
 from utils.db import db
 
 cuenta_predio = Blueprint('cuenta_predio', __name__, url_prefix='/api/cuenta_predio')
 
+# @cuenta_predio.route("/", methods=['GET'])
+# def getCuentas():
+#     data = {}
+#     cuentas = Cuenta_Predio.query.all()
+#     data['Cuentas'] = [cuenta.to_json() for cuenta in cuentas]
+
+#     print(cuentas)  
+
+#     return jsonify(data)
+
 @cuenta_predio.route("/", methods=['GET'])
 def getCuentas():
-    data = {}
+    print("iniciio")
     cuentas = Cuenta_Predio.query.all()
-    data['Cuentas'] = [cuenta.to_json() for cuenta in cuentas]
-
-    print(cuentas)  
+    print(cuentas)
+    result = cuentas_schema.dump(cuentas)
+    #data['Cuentas'] = [cuenta.to_json() for cuenta in cuentas]
+ 
+    data = {
+        'message': 'Todas las cuentas predio',
+        'status': 200,
+        'cuentas': result
+    }
 
     return jsonify(data)
 

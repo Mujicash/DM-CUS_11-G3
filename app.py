@@ -18,6 +18,7 @@ from routes.casa_estado import casa_estado
 from routes.tipo_documento import tipo_documento
 from routes.recibo_estado import recibo_estado
 from utils.db import db
+from utils.ma import ma
 
 app = Flask(__name__)
 # connection = psycopg2.connect(url)
@@ -43,3 +44,4 @@ app.register_blueprint(recibo_estado)
 
 
 db.init_app(app)
+ma.init_app(app)

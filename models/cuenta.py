@@ -12,6 +12,8 @@ class Cuenta(db.Model):
     id_persona = db.Column(db.Integer, db.ForeignKey('persona.id_persona'))
     id_banco = db.Column(db.Integer, db.ForeignKey('banco.id_banco'))
 
+    recaudacion = db.relationship('Recaudacion', backref='cuenta_origen_recaudacion')
+
     def __init__(self, id_persona, id_banco, id_tipo_moneda, ncuenta):
         self.ncuenta = ncuenta
         self.id_tipo_moneda = id_tipo_moneda

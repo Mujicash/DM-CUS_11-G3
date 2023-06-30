@@ -1,18 +1,36 @@
 from flask import Blueprint, request, jsonify
 from models.cuenta import Cuenta
+from schemas.cuenta import cuenta_schema, cuentas_schema
 from utils.db import db
 
 cuenta = Blueprint('cuenta', __name__, url_prefix='/api/cuenta')
 
+# @cuenta.route("/", methods=['GET'])
+# def getCuentas():
+#     data = {}
+#     cuentas = Cuenta.query.all()
+#     data['Cuentas'] = [cuenta.to_json() for cuenta in cuentas]
+
+#     print(cuentas)  
+
+#     return jsonify(data)
+
+
 @cuenta.route("/", methods=['GET'])
 def getCuentas():
-    data = {}
+    print("inicio")
     cuentas = Cuenta.query.all()
-    data['Cuentas'] = [cuenta.to_json() for cuenta in cuentas]
+    print(cuentas) 
+    result = cuentas_schema.dump(cuentas)
 
-    print(cuentas)  
+    data = {
+        'message': 'Todas las cuentas',
+        'status': 200,
+        'cuentas': result
+    } 
 
     return jsonify(data)
+
 
 @cuenta.route("/add", methods=['POST'])
 def addCuentas():

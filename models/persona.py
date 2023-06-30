@@ -18,6 +18,10 @@ class Persona(db.Model):
     direccion = db.Column(db.String(150), nullable=False)
     idubigeo = db.Column(db.String(6), nullable=False)
 
+    documento = db.relationship('Tipo_Documento', backref='documento')
+    #persona_cuentas = db.relationship('Cuenta', backref='persona_cuenta', lazy=True)
+    cuentas = db.relationship('Cuenta', backref='persona')
+
     def __init__(self, apellido_paterno, apellido_materno, nombres, fecha_nacimiento, id_tipo_documento, numero_documento, direccion, idubigeo):
         self.nombres = nombres
         self.apellido_paterno = apellido_paterno

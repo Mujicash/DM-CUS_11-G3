@@ -11,6 +11,8 @@ class Estado(db.Model):
     id_estado = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(15))
 
+    cuentas_predio = db.relationship('Cuenta_Predio', backref='estado_cuenta_predio')
+
     def __init__(self, descripcion):
         self.descripcion = descripcion
 

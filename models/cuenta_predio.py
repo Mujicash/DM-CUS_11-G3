@@ -19,6 +19,8 @@ class Cuenta_Predio(db.Model):
     fecha_cierre = db.Column(db.DateTime, nullable=True)
     correo_autorizado = db.Column(db.String(40))
 
+    recaudacion = db.relationship('Recaudacion', backref='cuenta_predio_recaudacion')
+
     def __init__(self, id_predio, id_estado, id_tipo_autorizacion, id_banco, id_tipo_moneda, 
                  ncuenta, ntarjeta, fecha_apertura, fecha_autorizacion, fecha_cierre, correo_autorizado):
         self.id_predio = id_predio

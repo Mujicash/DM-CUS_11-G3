@@ -1,16 +1,30 @@
 from flask import Blueprint, request, jsonify
 from models.predio import Predio
+from schemas.predio import predios_schema
 from utils.db import db
 
 predio = Blueprint('predio', __name__, url_prefix='/api/predio')
 
+# @predio.route("/", methods=['GET'])
+# def getPredios():
+#     data = {}
+#     predios = Predio.query.all()
+#     data['Predios'] = [predio.to_json() for predio in predios]
+
+#     print(data)  
+
+#     return jsonify(data)
+
 @predio.route("/", methods=['GET'])
 def getPredios():
-    data = {}
     predios = Predio.query.all()
-    data['Predios'] = [predio.to_json() for predio in predios]
+    result = predios_schema.dump(predios)
 
-    print(data)  
+    data = {
+        "message": "ok",
+        "status": 200,
+        "predios": result
+    }
 
     return jsonify(data)
 

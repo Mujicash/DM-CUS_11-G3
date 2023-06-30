@@ -5,20 +5,36 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import text
 
 from models.recaudacion import Recaudacion
+from schemas.recaudacion import recaudaciones_schema
 from utils.db import db
 
 recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
+
+
+# @recaudaciones.route("/", methods=["GET"])
+# def listarRecaudaciones():
+#     data = {}
+#     recaudaciones = Recaudacion.query.all()
+#     data["Recaudaciones"] = [recaudacion.to_json() for recaudacion in recaudaciones]
+
+#     print(recaudaciones)
+
+#     return jsonify(data)
 
 
 @recaudaciones.route("/", methods=["GET"])
 def listarRecaudaciones():
     data = {}
     recaudaciones = Recaudacion.query.all()
-    data["Recaudaciones"] = [recaudacion.to_json() for recaudacion in recaudaciones]
+    result = recaudaciones_schema.dump(recaudaciones)
 
-    print(recaudaciones)
+    
+    data = {
+        "recaudaciones": result
+    }
 
     return jsonify(data)
+
 
 
 @recaudaciones.route("/", methods=["POST"])

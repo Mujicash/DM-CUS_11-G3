@@ -20,6 +20,8 @@ class Recibo(db.Model):
     observacion = db.Column(db.String(100))
     id_recibo_estado = db.Column(db.Integer, db.ForeignKey('recibo_estado.id_recibo_estado'))
 
+    recaudacion = db.relationship('Recaudacion', backref='recibo_mant_recaudacion')
+
     def __init__(self, numero_recibo, periodo, fecha_emision, fecha_vencimiento, importe, ajuste, observacion, id_casa, id_recibo_estado):
         self.n_recibo = numero_recibo
         self.periodo = periodo

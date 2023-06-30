@@ -15,6 +15,9 @@ class Predio(db.Model):
     direccion = db.Column(db.String(100))
     idubigeo = db.Column(db.String(6))
 
+    tipo_predio = db.relationship('Tipo_Predio', backref='tipo_predio', lazy=True)
+    #cuentas_predio = db.relationship('Cuenta_Predio', back_populates='predio_relacionado')
+
     def __init__(self, descripcion, ruc, telefono, correo, direccion, idubigeo, id_tipo_predio):
         self.descripcion = descripcion
         self.ruc = ruc

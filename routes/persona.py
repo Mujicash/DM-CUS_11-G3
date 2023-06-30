@@ -1,19 +1,34 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 
 from models.persona import Persona
+from schemas.persona import persona_schema, personas_schema
 from utils.db import db
 
 persona = Blueprint('persona', __name__, url_prefix='/api/persona')
 
+# @persona.route("/", methods=['GET'])
+# def getPersonas():
+#     data = {}
+#     personas = Persona.query.all()
+#     data['Personas'] = [persona.to_json() for persona in personas]
+
+#     print(personas)  
+
+#     return jsonify(data)
+
 @persona.route("/", methods=['GET'])
 def getPersonas():
-    data = {}
+    
     personas = Persona.query.all()
-    data['Personas'] = [persona.to_json() for persona in personas]
+    result = personas_schema.dump(personas)
 
-    print(personas)  
+    personas = {
+        'message': 'All Persons',
+        'status': 200,
+        'personas': result
+    }
 
-    return jsonify(data)
+    return jsonify(personas)
 
 @persona.route("/add", methods=['POST'])
 def addPersona():
