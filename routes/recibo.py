@@ -4,17 +4,31 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import text
 
 from models.recibo import Recibo
+
+from schemas.recibo import recibos_schema
+
 from utils.db import db
 
 recibos = Blueprint('recibo', __name__, url_prefix='/api/recibos')
 
+# @recibos.route("/", methods=['GET'])
+# def getRecibos():
+#     data = {}
+#     recibos = Recibo.query.all()
+#     data['Recibos'] = [recibo.to_json() for recibo in recibos]
+
+#     print(recibos)  
+
+#     return jsonify(data)
+
 @recibos.route("/", methods=['GET'])
 def getRecibos():
-    data = {}
     recibos = Recibo.query.all()
-    data['Recibos'] = [recibo.to_json() for recibo in recibos]
+    result = recibos_schema.dump(recibos)
 
-    print(recibos)  
+    data = {
+        "recibos": result
+    }
 
     return jsonify(data)
 

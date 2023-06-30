@@ -11,6 +11,8 @@ class Recibo_Estado(db.Model):
     id_recibo_estado = db.Column(db.Integer, primary_key = True)
     descripcion = db.Column(db.String(15))
 
+    recibo = db.relationship('Recibo', backref='estado_recibo')
+
     def __init__(self, nombre):
         self.descripcion = nombre
 
