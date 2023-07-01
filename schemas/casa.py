@@ -1,6 +1,8 @@
 from utils.ma import ma
 from models.casa import Casa
 
+from schemas.predio_mdu import PredioMduSchema
+
 class CasaSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Casa
@@ -10,7 +12,10 @@ class CasaSchema(ma.SQLAlchemySchema):
             "piso",
             "area",
             "participacion",
+            "predio_mdu"
         ]
+    
+    predio_mdu = ma.Nested(PredioMduSchema)
 
 casa_schema = CasaSchema()
 casas_schema = CasaSchema(many=True)

@@ -17,7 +17,7 @@ class ReciboSchema(ma.SQLAlchemySchema):
             "estado_recibo"
         ]
 
-    recibo_casa = ma.Nested(CasaSchema, only = ["numero", "piso", "area", "participacion"])
+    recibo_casa = ma.Nested(CasaSchema, only = ["id_casa", "numero", "piso", "area", "participacion", "predio_mdu"])
     estado_recibo = ma.Nested(ReciboEstadoSchema, only = ["descripcion"]) 
 
 recibo_schema = ReciboSchema()

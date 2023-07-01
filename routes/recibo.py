@@ -4,22 +4,16 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import text
 
 from models.recibo import Recibo
+from models.recibo_detalle import Recibo_Detalle
+from models.gasto import Gasto
+from models.tipo_gasto import Tipo_Gasto
 
 from schemas.recibo import recibos_schema
+from schemas.recibo_detalle import detalle_recibos_schema
 
 from utils.db import db
 
 recibos = Blueprint('recibo', __name__, url_prefix='/api/recibos')
-
-# @recibos.route("/", methods=['GET'])
-# def getRecibos():
-#     data = {}
-#     recibos = Recibo.query.all()
-#     data['Recibos'] = [recibo.to_json() for recibo in recibos]
-
-#     print(recibos)  
-
-#     return jsonify(data)
 
 @recibos.route("/", methods=['GET'])
 def getRecibos():
@@ -52,22 +46,50 @@ def addRecibo():
 
     return "saving a new receipt"
 
+@recibos.route("/detalle/", methods=['GET'])
+def listarRecibosDetalle():
+    recibos = Recibo_Detalle.query.all()
+    result = detalle_recibos_schema.dump(recibos)
+
+    data = {
+        "detalle-recibos": result
+    }
+
+    return jsonify(data)
+
+@recibos.route("/detalle/<int:id>", methods=['GET'])
+def listarDetallesRecibo(id):
+    detalles_recibos = Recibo_Detalle.query.filter(Recibo_Detalle.id_mant_recibo == id).all()
+    result = detalle_recibos_schema.dump(detalles_recibos)
+
+    data = {
+        "detalles-recibo": result
+    }
+
+    return jsonify(data)
+
 @recibos.route("/recibo-tipo-gasto/<int:id>", methods=['GET'])
 def mantenimientoReciboTipoGasto(id):
-
-    sql = text(
-        "select tg.id_tipo_gasto, tg.descripcion, SUM(mrd.importe_casa) total_tipo_gasto " +
-        "from mant_recibo_det mrd " + 
-        "inner join gasto g on mrd.id_gasto = g.id_gasto " +
-        "inner join tipo_gasto tg on g.id_tipo_gasto = tg.id_tipo_gasto " + 
-        "where id_mant_recibo = :id " + 
-        "group by tg.id_tipo_gasto"
+    detalle_recibos = (
+        Recibo_Detalle.query
+        .join(Gasto, Recibo_Detalle.id_gasto == Gasto.id_gasto)
+        .join(Tipo_Gasto, Gasto.id_tipo_gasto == Tipo_Gasto.id_tipo_gasto)
+        .filter(Recibo_Detalle.id_mant_recibo == id)
+        .all()
     )
+    result = detalle_recibos_schema.dump(detalle_recibos)
 
-    with db.engine.connect() as conn:
-        result = conn.execute(sql, {'id': id})
-        columns = [key for key in result.keys()]
+    datos_agrupados = {}
 
-    recaudaciones_tipo_gasto = [{columns[index]: r for index, r in enumerate(row)} for row in result]
-    
-    return jsonify(recaudaciones_tipo_gasto)
+    for item in result:
+        descripcion = item["gasto"]["tipo_gasto"]["descripcion"]
+        importe = float(item["importe_casa"])
+
+        datos_agrupados[descripcion] = importe if descripcion not in datos_agrupados else (datos_agrupados[descripcion] + importe)
+
+    data = [
+        {"descripcion": descripcion, "total_tipo_gasto": importe}
+        for descripcion, importe in datos_agrupados.items()
+    ]
+
+    return jsonify(data)

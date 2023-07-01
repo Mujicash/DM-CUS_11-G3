@@ -11,7 +11,7 @@ class Casa(db.Model):
     id_casa = db.Column(db.Integer, primary_key = True)
     id_predio = db.Column(db.Integer, db.ForeignKey('predio.id_predio'))
     id_estado = db.Column(db.Integer, db.ForeignKey('casa_estado.id_estado'))
-    id_predio_mdu = db.Column(db.Integer)
+    id_predio_mdu = db.Column(db.Integer, db.ForeignKey('predio_mdu.id_predio_mdu'))
     numero = db.Column(db.Integer)
     piso = db.Column(db.Integer)
     area = db.Column(db.Float(10,2))

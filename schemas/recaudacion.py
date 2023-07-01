@@ -18,13 +18,14 @@ class RecaudacionSchema(ma.SQLAlchemySchema):
             "estado_recaudacion",
             "cuenta_predio_recaudacion",
             "cuenta_origen_recaudacion",
-            "recibo_mant_recaudacion"
+            "recibo_mant_recaudacion",
+            "predio_mdu"
         ]
     
     estado_recaudacion = ma.Nested(RecaudacionEstadoSchema, only=['descripcion'])
     cuenta_predio_recaudacion = ma.Nested(CuentaPredioSchema, only=["ncuenta"])
     cuenta_origen_recaudacion = ma.Nested(CuentaSchema, only=['ncuenta', 'persona'])
-    recibo_mant_recaudacion = ma.Nested(ReciboSchema, only=["n_recibo", "periodo", "importe", "ajuste"])
+    recibo_mant_recaudacion = ma.Nested(ReciboSchema, only=["n_recibo", "periodo", "importe", "ajuste", "recibo_casa"])
 
 recaudacion_schema = RecaudacionSchema()
 recaudaciones_schema = RecaudacionSchema(many=True)

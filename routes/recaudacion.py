@@ -5,21 +5,13 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import text
 
 from models.recaudacion import Recaudacion
-from schemas.recaudacion import recaudaciones_schema
+from models.recibo import Recibo
+from models.casa import Casa
+from models.predio_mdu import Predio_Mdu
+from schemas.recaudacion import recaudacion_schema, recaudaciones_schema
 from utils.db import db
 
 recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
-
-
-# @recaudaciones.route("/", methods=["GET"])
-# def listarRecaudaciones():
-#     data = {}
-#     recaudaciones = Recaudacion.query.all()
-#     data["Recaudaciones"] = [recaudacion.to_json() for recaudacion in recaudaciones]
-
-#     print(recaudaciones)
-
-#     return jsonify(data)
 
 
 @recaudaciones.route("/", methods=["GET"])
@@ -31,6 +23,20 @@ def listarRecaudaciones():
     
     data = {
         "recaudaciones": result
+    }
+
+    return jsonify(data)
+
+
+@recaudaciones.route("/<int:id>", methods=["GET"])
+def listarRecaudacion(id):
+    data = {}
+    recaudaciones = Recaudacion.query.get(id)
+    result = recaudacion_schema.dump(recaudaciones)
+
+    
+    data = {
+        "recaudacion": result
     }
 
     return jsonify(data)
@@ -72,22 +78,24 @@ def agregarRecaudacion():
 
 @recaudaciones.route("/recaudacion-predio/<int:id>", methods=["GET"])
 def recaudacionesXPredio(id):
-    sql = text(
-        "select r.id_recaudacion, TO_CHAR(r.fecha_operacion, 'dd/mm/YYYY') fecha_operacion, tm.etiqueta, r.importe, " +
-        "r.id_recaudacion_estado, mt.id_mant_recibo, c.id_casa, c.numero, c.piso, pm.id_predio_mdu, pm.descripcion " + 
-        "from recaudacion r " +
-        "inner join tipo_moneda tm on r.moneda = tm.id_tipo_moneda " + 
-        "inner join mant_recibo mt on r.id_mant_recibo = mt.id_mant_recibo " + 
-        "inner join casa c on mt.id_casa = c.id_casa " +
-        "inner join predio_mdu pm on c.id_predio_mdu = pm.id_predio_mdu " +
-        "where c.id_predio = :id"
+
+    recaudaciones = (
+        Recaudacion.query
+        .join(Recibo, Recaudacion.id_mant_recibo == Recibo.id_mant_recibo)
+        .join(Casa, Recibo.id_casa == Casa.id_casa)
+        .join(Predio_Mdu, Casa.id_predio_mdu == Predio_Mdu.id_predio_mdu)
+        .filter(Casa.id_predio == id)
+        .all()
     )
 
-    with db.engine.connect() as conn:
-        result = conn.execute(sql, {'id': id})
-        columns = [key for key in result.keys()]
+    # for recaudacion in recaudaciones:
+    #     print(recaudacion.id_recaudacion, recaudacion.id_cuenta)
 
-    recaudaciones = [{columns[index]: r for index, r in enumerate(row)} for row in result]
+    result = recaudaciones_schema.dump(recaudaciones)
+
     
-    return jsonify(recaudaciones)
-
+    data = {
+        "recaudaciones": result
+    }
+    
+    return jsonify(data)
