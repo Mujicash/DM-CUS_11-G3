@@ -3,17 +3,7 @@ from models.predio import Predio
 from schemas.predio import predios_schema
 from utils.db import db
 
-predio = Blueprint('predio', __name__, url_prefix='/api/predio')
-
-# @predio.route("/", methods=['GET'])
-# def getPredios():
-#     data = {}
-#     predios = Predio.query.all()
-#     data['Predios'] = [predio.to_json() for predio in predios]
-
-#     print(data)  
-
-#     return jsonify(data)
+predio = Blueprint('predio', __name__, url_prefix='/api/predios')
 
 @predio.route("/", methods=['GET'])
 def getPredios():

@@ -8,7 +8,13 @@ from models.recaudacion import Recaudacion
 from models.recibo import Recibo
 from models.casa import Casa
 from models.predio_mdu import Predio_Mdu
+from models.recibo_detalle import Recibo_Detalle
+from models.gasto import Gasto
+from models.tipo_gasto import Tipo_Gasto
+
+from schemas.recibo_detalle import detalle_recibos_schema
 from schemas.recaudacion import recaudacion_schema, recaudaciones_schema
+
 from utils.db import db
 
 recaudaciones = Blueprint("recaudacion", __name__, url_prefix="/api/recaudaciones")
@@ -88,14 +94,53 @@ def recaudacionesXPredio(id):
         .all()
     )
 
-    # for recaudacion in recaudaciones:
-    #     print(recaudacion.id_recaudacion, recaudacion.id_cuenta)
-
     result = recaudaciones_schema.dump(recaudaciones)
-
     
     data = {
         "recaudaciones": result
     }
     
+    return jsonify(data)
+
+@recaudaciones.route("/detalle-gastos/<int:id>", methods=['GET'])
+def RecaudacionTipoGasto(id):
+
+    recaudaciones = Recaudacion.query.get(id)
+    result = recaudacion_schema.dump(recaudaciones)
+
+    persona = result["cuenta_origen_recaudacion"]["persona"]
+    id_mant_recibo = result["recibo_mant_recaudacion"]["id_mant_recibo"]
+    n_departamento = str(result["recibo_mant_recaudacion"]["recibo_casa"]["piso"]) + str(result["recibo_mant_recaudacion"]["recibo_casa"]["numero"]).zfill(2)
+    torre = result["recibo_mant_recaudacion"]["recibo_casa"]["predio_mdu"]["descripcion"]
+
+
+    detalle_recibos = (
+        Recibo_Detalle.query
+        .join(Gasto, Recibo_Detalle.id_gasto == Gasto.id_gasto)
+        .join(Tipo_Gasto, Gasto.id_tipo_gasto == Tipo_Gasto.id_tipo_gasto)
+        .filter(Recibo_Detalle.id_mant_recibo == id_mant_recibo)
+        .all()
+    )
+    result = detalle_recibos_schema.dump(detalle_recibos)
+
+    datos_agrupados = {}
+
+    for item in result:
+        descripcion = item["gasto"]["tipo_gasto"]["descripcion"]
+        importe = round(float(item["importe_casa"]),2)
+
+        datos_agrupados[descripcion] = importe if descripcion not in datos_agrupados else (datos_agrupados[descripcion] + importe)
+
+    gastos = [
+        {"descripcion": descripcion, "total_tipo_gasto": importe}
+        for descripcion, importe in datos_agrupados.items()
+    ]
+
+    data = {
+        "persona": persona,
+        "departamento": n_departamento,
+        "torre": torre,
+        "gastos": gastos
+    }
+
     return jsonify(data)
