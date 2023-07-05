@@ -2,7 +2,7 @@ import datetime
 import decimal
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import text
+from sqlalchemy import text, extract
 
 from models.recaudacion import Recaudacion
 from models.recibo import Recibo
@@ -53,7 +53,7 @@ def listarRecaudacion(id):
 def agregarRecaudacion():
     body = request.get_json()
 
-    id_recaudacion = body["id_recaudacion"]
+    #id_recaudacion = body["id_recaudacion"]
     id_cuenta = body["id_cuenta"]
     id_mant_recibo = body["id_mant_recibo"]
     n_operacion = body["n_operacion"]
@@ -65,7 +65,6 @@ def agregarRecaudacion():
     observacion = body["observacion"]
 
     nueva_recaudacion = Recaudacion(
-        id_recaudacion,
         id_cuenta,
         id_mant_recibo,
         n_operacion,
@@ -85,12 +84,20 @@ def agregarRecaudacion():
 @recaudaciones.route("/recaudacion-predio/<int:id>", methods=["GET"])
 def recaudacionesXPredio(id):
 
+    body = request.get_json()
+    year = body["year"]
+    month = body["month"]
+
     recaudaciones = (
         Recaudacion.query
         .join(Recibo, Recaudacion.id_mant_recibo == Recibo.id_mant_recibo)
         .join(Casa, Recibo.id_casa == Casa.id_casa)
         .join(Predio_Mdu, Casa.id_predio_mdu == Predio_Mdu.id_predio_mdu)
-        .filter(Casa.id_predio == id)
+        .filter(
+            Casa.id_predio == id,
+            extract('year', Recaudacion.fecha_operacion) == year,
+            extract('month', Recaudacion.fecha_operacion) == month
+        )
         .all()
     )
 
@@ -110,8 +117,8 @@ def RecaudacionTipoGasto(id):
 
     persona = result["cuenta_origen_recaudacion"]["persona"]
     id_mant_recibo = result["recibo_mant_recaudacion"]["id_mant_recibo"]
-    n_departamento = str(result["recibo_mant_recaudacion"]["recibo_casa"]["piso"]) + str(result["recibo_mant_recaudacion"]["recibo_casa"]["numero"]).zfill(2)
-    torre = result["recibo_mant_recaudacion"]["recibo_casa"]["predio_mdu"]["descripcion"]
+    n_departamento = str(result["recibo_mant_recaudacion"]["casa"]["piso"]) + str(result["recibo_mant_recaudacion"]["casa"]["numero"]).zfill(2)
+    torre = result["recibo_mant_recaudacion"]["casa"]["predio_mdu"]["descripcion"]
 
 
     detalle_recibos = (
